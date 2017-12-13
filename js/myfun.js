@@ -3,47 +3,65 @@
  */
 function draw(data) {
 
-    /*
-     D3.js setup code
-     */
+    //var margin = 75,
+    //    width = 1400 - margin,
+    //    height = 600 - margin;
 
-    "use strict";
-    var margin = 75,
-        width = 1400 - margin,
-        height = 600 - margin;
+    //var svg = d3.select("body")
+    //    .append("svg")
+    //    .attr("width", width + margin)
+    //    .attr("height", height + margin)
+    //    .append('g')
+    //    .attr('class', 'map');
 
-    var title = d3.select("body")
-        .append("h2")
-        .text("World Cup Attendance")
+    function summary_method() {
+
+        //击球率
+        var l_avg_num = d3.set();
+        var r_avg_num = d3.set();
+        var b_avg_num = d3.set();
+
+        //球员数量
+        var r_player = 0;
+        var l_player = 0;
+        var b_player = 0;
+
+        data.forEach(function (d) {
+
+            if (d['handedness'] == 'R') {
+                r_player += 1
+                r_avg_num.add(d['avg'])
+            } else if (d['handedness'] == 'L') {
+                l_player += 1
+                l_avg_num.add(d['avg'])
+            } else {
+                b_player += 1
+                b_avg_num.add(d['avg'])
+            }
+        });
+
+        //算出球员的平均击球率,并保留两位小数
+        var r_avg_mean = +d3.mean(r_avg_num.values()).toFixed(2);
+        var l_avg_mean = +d3.mean(l_avg_num.values()).toFixed(2);
+        var b_avg_mean = +d3.mean(b_avg_num.values()).toFixed(2);
 
 
+        //计算左右手,双手球员的数量,击球率,以及全垒数
+        var players = [{"类型": "左手球员", "球员人数": l_player, "avg_mean": l_avg_mean},
+            {"类型": "右手手球员", "球员人数": r_player, "avg_mean": r_avg_mean},
+            {"类型": "双手球员", "球员人数": b_player, "avg_mean": b_avg_mean}
+        ];
 
-    var svg = d3.select("body")
-        .append("svg")
-        .attr("width", width + margin)
-        .attr("height", height + margin)
-        .append('g')
-        .attr('class', 'chart');
+        return players;
+    }
 
-    /*
-     Dimple.js Chart construction code
-     */
+    var nested = summary_method();
 
-    var myChart = new dimple.chart(svg, data);
-    var x = myChart.addTimeAxis("x", "year");
-    myChart.addMeasureAxis("y", "attendance");
-    x.dateParseFormat = "%Y";
-    //按年份输出标签
-    x.tickFormat = "%Y";
-    //每4年一次输出标签
-    x.timeInterval = 4
-
-//
-//          addseries函数第一个变量是一个分类器,比如输入stage,就会把bar chart按stage分类
-    myChart.addSeries(null, dimple.plot.line);
-    myChart.addSeries(null, dimple.plot.scatter);
-
-    myChart.draw();
-
+    var svg = dimple.newSvg("body", 800, 600);
+    var chart = new dimple.chart(svg, nested);
+    chart.addCategoryAxis("x", "类型");
+    chart.addMeasureAxis("y", "球员人数");
+    chart.addSeries(null, dimple.plot.bar);
+    chart.draw();
 
 };

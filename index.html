@@ -3,17 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <title>Visualization Project</title>
-    <script src="http://d3js.org/d3.v3.min.js"></script>
-    <script src="http://dimplejs.org/dist/dimple.v2.0.0.min.js"></script>
+    <script src="http://d3js.org/d3.v4.min.js"></script>
+    <script src="http://dimplejs.org/dist/dimple.v2.3.0.min.js"></script>
+
     <script src="js/myfun.js"></script>
 
     <link rel="stylesheet" href="css/style.css">
+
 
 </head>
 <body>
 
 <script type="text/javascript">
-    d3.csv("baseball_data.csv",draw);
+
+    function filter(d) {
+        //转化为数字
+        d.height = +d.height;
+        d.weight = +d.weight;
+        d.avg = +d.avg;
+        d.HR = +d.HR;
+
+
+        //由于全垒得分可以为0, 所以仅过滤击球率为0的
+        if (d.avg != 0){
+            return d;
+        }
+    }
+
+    d3.csv("baseball_data.csv", filter, draw);
+
 </script>
 
 </body>
