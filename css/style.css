@@ -6,9 +6,8 @@ circle {
     stroke: none;
 }
 div.years_buttons {
-    position: fixed;
-    top: 15px;
-    left: 50px;
+    float: left;
+    margin-top: 55px;
 }
 
 div.years_buttons div {
@@ -19,6 +18,8 @@ div.years_buttons div {
 
 #plotchartContainer{
     float: right;
+    margin-top: 20px;
+
 }
 
 #barchartContainer{

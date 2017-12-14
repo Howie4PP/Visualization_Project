@@ -116,9 +116,10 @@ function draw(data) {
         if (num >= 3) {
             clearInterval(baseball_interval);
             draw_button();
+            draw_plot();
 
         }
-    }, 1000);
+    }, 2000);
 
     //轮转方法
     function turn(num) {
@@ -204,17 +205,18 @@ function draw(data) {
             d3.selectAll("svg > *").remove();
             if (d === "球员人数") {
                 create_players()
+                draw_plot();
             } else if (d === "平均击球率") {
                 create_avg()
+                draw_plot();
             } else if (d === "平均本垒数") {
                 create_hr()
+                draw_plot();
             }
 
         })
 
     }
-
-    draw_plot()
 
     function draw_plot() {
 
