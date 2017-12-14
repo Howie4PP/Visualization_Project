@@ -15,15 +15,20 @@
   <li>在设定完动画之后，我想在之前的Histrogram chart 之下，创建 scatter chart, 但是和同学聊天之后，发现横向排版两个图片，会使观众更好分辨图片。</li>
   <li>显示完所有动画之后，再进行显示剩余图形。</li>
   <li>修改动画间隔时间</li>
+  <li>添加文本说明</li>
 </ol>
 
 <h4>反馈</h4>
-
-&nbsp;&nbsp;&nbsp;1. 当前的变量不足以显示本次可视化的目的.              
-&nbsp;&nbsp;&nbsp;2. 纵向排版使得图形对比不清晰。
-&nbsp;&nbsp;&nbsp;3. 在图像显示上的顺序上有问题。
-&nbsp;&nbsp;&nbsp;4. 动画速度太快。
+<ol>
+  <li>当前的变量不足以显示本次可视化的目的。</li>
+  <li>纵向排版使得图形对比不清晰。</li>
+  <li>在图像显示上的顺序上有问题。</li>
+  <li>动画速度太快。</li>
+  <li>没有说明</li>
+</ol>  
 
 <h4>资源</h4>                    
 
-&nbsp;&nbsp;课程资源                  
+课程资源<br>
+<a href="http://dimplejs.org/">Dimplejs</a>
+  
