@@ -8,6 +8,7 @@ circle {
 div.years_buttons {
     float: left;
     margin-top: 55px;
+    margin-left: -10px;
 }
 
 div.years_buttons div {
@@ -24,4 +25,13 @@ div.years_buttons div {
 
 #barchartContainer{
     float: left;
+}
+
+.summery{
+    display: block;
+    clear: both;
+    margin-top: 20px;
+    text-align: center;
+    width: 100%;
+
 }

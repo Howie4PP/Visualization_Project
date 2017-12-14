@@ -175,9 +175,7 @@ function draw(data) {
     var btn_name = ["球员人数", "平均击球率", "平均本垒数"];
     //绘制转化按钮去切换图形
     function draw_button() {
-        var buttons = d3.select("body")
-            .append("div")
-            .attr("class", "years_buttons")
+        var buttons = d3.select(".years_buttons")
             .selectAll("div")
             .data(btn_name)
             .enter()
@@ -274,5 +272,9 @@ function draw(data) {
             });
 
     }
+
+
+
+
 
 };
