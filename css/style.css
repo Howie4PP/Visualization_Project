@@ -5,3 +5,22 @@ circle {
     opacity: 0.4;
     stroke: none;
 }
+div.years_buttons {
+    position: fixed;
+    top: 15px;
+    left: 50px;
+}
+
+div.years_buttons div {
+    background-color: rgb(251, 201, 127);
+    padding: 3px;
+    margin: 7px;
+}
+
+#plotchartContainer{
+    float: right;
+}
+
+#barchartContainer{
+    float: left;
+}

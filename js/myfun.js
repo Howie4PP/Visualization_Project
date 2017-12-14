@@ -3,17 +3,6 @@
  */
 function draw(data) {
 
-    //var margin = 75,
-    //    width = 1400 - margin,
-    //    height = 600 - margin;
-
-    //var svg = d3.select("body")
-    //    .append("svg")
-    //    .attr("width", width + margin)
-    //    .attr("height", height + margin)
-    //    .append('g')
-    //    .attr('class', 'map');
-
     function summary_method() {
 
         //击球率
@@ -21,47 +10,267 @@ function draw(data) {
         var r_avg_num = d3.set();
         var b_avg_num = d3.set();
 
+        //全垒数
+        var l_hr_num = d3.set();
+        var r_hr_num = d3.set();
+        var b_hr_num = d3.set();
+
         //球员数量
         var r_player = 0;
         var l_player = 0;
         var b_player = 0;
+
+        var player_plot = [];
+
 
         data.forEach(function (d) {
 
             if (d['handedness'] == 'R') {
                 r_player += 1
                 r_avg_num.add(d['avg'])
+                r_hr_num.add(d['HR'])
+
+                var r_plot = {"类型": "右手球员", "击球率": d['avg'], "本垒数": d['HR']}
+                player_plot.push(r_plot)
+
             } else if (d['handedness'] == 'L') {
                 l_player += 1
                 l_avg_num.add(d['avg'])
+                l_hr_num.add(d['HR'])
+
+                var l_plot = {"类型": "左手球员", "击球率": d['avg'], "本垒数": d['HR']}
+                player_plot.push(l_plot)
+
             } else {
                 b_player += 1
                 b_avg_num.add(d['avg'])
+                b_hr_num.add(d['HR'])
+
+                var b_plot = {"类型": "双手球员", "击球率": d['avg'], "本垒数": d['HR']}
+                player_plot.push(b_plot)
             }
+
+
         });
 
-        //算出球员的平均击球率,并保留两位小数
+        //算出球员的平均击球数,并保留两位小数
         var r_avg_mean = +d3.mean(r_avg_num.values()).toFixed(2);
         var l_avg_mean = +d3.mean(l_avg_num.values()).toFixed(2);
         var b_avg_mean = +d3.mean(b_avg_num.values()).toFixed(2);
 
+        //算出球员的平均本垒数
+        var r_hr_mean = +d3.mean(r_hr_num.values()).toFixed(2);
+        var l_hr_mean = +d3.mean(l_hr_num.values()).toFixed(2);
+        var b_hr_mean = +d3.mean(b_hr_num.values()).toFixed(2);
 
         //计算左右手,双手球员的数量,击球率,以及全垒数
-        var players = [{"类型": "左手球员", "球员人数": l_player, "avg_mean": l_avg_mean},
-            {"类型": "右手手球员", "球员人数": r_player, "avg_mean": r_avg_mean},
-            {"类型": "双手球员", "球员人数": b_player, "avg_mean": b_avg_mean}
+        var players = [{"类型": "左手球员", "球员人数": l_player, "击球率平均值": l_avg_mean, "本垒数平均值": l_hr_mean},
+            {"类型": "右手球员", "球员人数": r_player, "击球率平均值": r_avg_mean, "本垒数平均值": r_hr_mean},
+            {"类型": "双手球员", "球员人数": b_player, "击球率平均值": b_avg_mean, "本垒数平均值": b_hr_mean}
         ];
+
 
         return players;
     }
 
-    var nested = summary_method();
+    function summary_plot() {
 
-    var svg = dimple.newSvg("body", 800, 600);
-    var chart = new dimple.chart(svg, nested);
-    chart.addCategoryAxis("x", "类型");
-    chart.addMeasureAxis("y", "球员人数");
-    chart.addSeries(null, dimple.plot.bar);
-    chart.draw();
+
+        var player_plot = [];
+
+
+        data.forEach(function (d) {
+
+            if (d['handedness'] == 'R') {
+                var r_plot = {"类型": "右手球员", "击球率": d['avg'], "本垒数": d['HR']}
+                player_plot.push(r_plot)
+            } else if (d['handedness'] == 'L') {
+                var l_plot = {"类型": "左手球员", "击球率": d['avg'], "本垒数": d['HR']}
+                player_plot.push(l_plot)
+
+            } else {
+                var b_plot = {"类型": "双手球员", "击球率": d['avg'], "本垒数": d['HR']}
+                player_plot.push(b_plot)
+            }
+
+        });
+
+        return player_plot;
+    }
+
+
+    //得到需要的数据和总结点
+    var nested = summary_method();
+    var player_plot = summary_plot();
+
+    var svg = dimple.newSvg("#barchartContainer", 600, 500);
+    var svg_plot = dimple.newSvg("#plotchartContainer", 600, 500);
+
+    var num = 0;
+    //加入动画
+    var baseball_interval = setInterval(function () {
+
+        turn(num);
+        num++;
+
+        if (num >= 3) {
+            clearInterval(baseball_interval);
+            draw_button();
+
+        }
+    }, 1000);
+
+    //轮转方法
+    function turn(num) {
+
+        d3.selectAll("svg > *").remove();
+
+        if (num == 0) {
+
+            create_players()
+
+        } else if (num == 1) {
+
+            create_avg()
+
+        } else if (num == 2) {
+
+            create_hr()
+        }
+    }
+
+
+    //建立球员数量的bar chart
+    function create_players() {
+
+        chart_player = new dimple.chart(svg, nested);
+        chart_player.addCategoryAxis("x", "类型");
+        chart_player.addMeasureAxis("y", "球员人数");
+        chart_player.addSeries(null, dimple.plot.bar);
+        chart_player.draw();
+
+    }
+
+    ////建立击球率平均值的bar chart
+    function create_avg() {
+        chart_avg = new dimple.chart(svg, nested);
+        chart_avg.addCategoryAxis("x", "类型");
+        chart_avg.addMeasureAxis("y", "击球率平均值");
+        chart_avg.addSeries(null, dimple.plot.bar);
+        chart_avg.draw();
+
+    }
+
+    //建立本垒数平均值的bar chart
+    function create_hr() {
+        chart_hr = new dimple.chart(svg, nested);
+        chart_hr.addCategoryAxis("x", "类型");
+        chart_hr.addMeasureAxis("y", "本垒数平均值");
+        chart_hr.addSeries(null, dimple.plot.bar);
+        chart_hr.draw();
+    }
+
+
+    var btn_name = ["球员人数", "平均击球率", "平均本垒数"];
+    //绘制转化按钮去切换图形
+    function draw_button() {
+        var buttons = d3.select("body")
+            .append("div")
+            .attr("class", "years_buttons")
+            .selectAll("div")
+            .data(btn_name)
+            .enter()
+            .append("div")
+            .text(function (d) {
+                return d;
+            });
+
+        //绑定点击事件
+        buttons.on("click", function (d) {
+            d3.select(".years_buttons")
+                .selectAll("div")
+                .transition()
+                .duration(500)
+                .style("color", "black")
+                .style("background", "rgb(251, 201, 127)");
+
+
+            d3.select(this)
+                .transition()
+                .duration(500)
+                .style("background", "green")
+                .style("color", "white");
+
+            d3.selectAll("svg > *").remove();
+            if (d === "球员人数") {
+                create_players()
+            } else if (d === "平均击球率") {
+                create_avg()
+            } else if (d === "平均本垒数") {
+                create_hr()
+            }
+
+        })
+
+    }
+
+    draw_plot()
+
+    function draw_plot() {
+
+
+        // Create the chart
+        var myChart = new dimple.chart(svg_plot, player_plot);
+        myChart.setBounds(60, 30, 420, 330)
+
+        // Create a standard bubble of SKUs by Price and Sales Value
+        // We are coloring by Owner as that will be the key in the legend
+        myChart.addMeasureAxis("x", "击球率");
+        myChart.addMeasureAxis("y", "本垒数");
+        myChart.addSeries(["击球率","本垒数","类型"], dimple.plot.bubble);
+        var myLegend = myChart.addLegend(530, 100, 60, 300, "Right");
+        myChart.draw();
+
+
+        //This is a critical step.  By doing this we orphan the legend. This
+        //means it will not respond to graph updates.  Without this the legend
+        //will redraw when the chart refreshes removing the unchecked item and
+        //also dropping the events we define below.
+        myChart.legends = [];
+
+        // Get a unique list of Owner values to use when filtering
+        var filterValues = dimple.getUniqueValues(player_plot, "类型");
+        // Get all the rectangles from our now orphaned legend
+        myLegend.shapes.selectAll("rect")
+            // Add a click event to each rectangle
+            .on("click", function (e) {
+                // This indicates whether the item is already visible or not
+                var hide = false;
+                var newFilters = [];
+                // If the filters contain the clicked shape hide it
+                filterValues.forEach(function (f) {
+                    if (f === e.aggField.slice(-1)[0]) {
+                        hide = true;
+                    } else {
+                        newFilters.push(f);
+                    }
+                });
+                // Hide the shape or show it
+                if (hide) {
+                    d3.select(this).style("opacity", 0.2);
+                } else {
+                    newFilters.push(e.aggField.slice(-1)[0]);
+                    d3.select(this).style("opacity", 0.8);
+                }
+                // Update the filters
+                filterValues = newFilters;
+                // Filter the data
+                myChart.data = dimple.filterData(player_plot, "类型", filterValues);
+                // Passing a duration parameter makes the chart animate. Without
+                // it there is no transition
+                myChart.draw(800);
+            });
+
+    }
 
 };
