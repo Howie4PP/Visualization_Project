@@ -33,7 +33,6 @@
   <li>动画速度太快。</li>
   <li>没有说明</li>
 </ol>  
-<h3>资源</h3>                    
-课程资源<br>
-<a href="http://dimplejs.org/">Dimplejs</a>
+<h3>资源</h3>    
+课程资源<br><a href="http://dimplejs.org/">Dimplejs</a>
   
